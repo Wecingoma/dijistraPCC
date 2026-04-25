@@ -40,3 +40,24 @@ ni de `matplotlib` pour le calcul.
 - Le dossier `.venv/` est ignoré par Git.
 - Si le projet doit être mis sur GitHub, créez un dépôt et poussez tout le code
   en veillant à ne pas inclure le dossier `.venv/`.
+
+
+
+Initialiser f = 0
+Initialiser π = 0
+
+Tant qu'il existe un chemin augmentant :
+    Calculer les coûts réduits
+    Trouver le plus court chemin (Dijkstra)
+    Mettre à jour les potentiels π
+    Augmenter le flot le long du chemin
+Fin
+
+
+L’algorithme a été implémenté sans recours à des bibliothèques spécialisées, afin de respecter les contraintes académiques et de maîtriser chaque étape du processus.
+
+| Route          | Coût (temps) | Capacité |
+| -------------- | ------------ | -------- |
+| Dépôt → Gombe  | 5            | 10       |
+| Dépôt → Limete | 3            | 8        |
+| Limete → Gombe | 2            | 5        |
