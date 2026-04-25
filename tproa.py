@@ -1,8 +1,12 @@
+"""Application Tkinter pour le problème du flot à coût minimum.
+
+Implémentation manuelle de l'algorithme primal-dual en Python.
+Aucune bibliothèque externe n'est utilisée pour le calcul du flot.
+"""
+
 import tkinter as tk
 from tkinter import ttk, messagebox
 from heapq import heappush, heappop
-import networkx as nx
-import matplotlib.pyplot as plt
 
 
 class Edge:
@@ -31,6 +35,16 @@ class MinCostFlow:
         self.original_edges.append((u, len(self.graph[u]) - 1))
 
     def min_cost_flow(self, source, sink, max_flow):
+        """Calcule un flot de coût minimum jusqu'au flot demandé.
+
+        Arguments:
+            source: indice de la source dans le graphe.
+            sink: indice du puits.
+            max_flow: flot total demandé.
+
+        Retourne:
+            (flot_envoyé, coût_total)
+        """
         INF = float("inf")
         total_flow = 0
         total_cost = 0
@@ -190,7 +204,7 @@ class MinCostFlowApp:
             row=8, column=0, columnspan=2, pady=10
         )
 
-        tk.Button(edge_frame, text="Tracer le graphe courant", command=self.draw_current_graph).grid(
+        tk.Button(edge_frame, text="Afficher le graphe courant", command=self.display_current_graph).grid(
             row=9, column=0, columnspan=2, pady=4
         )
 
@@ -353,83 +367,21 @@ class MinCostFlowApp:
                 f"{u} -> {v} | capacité={cap}, coût={cost}, flot utilisé={flow_used}\n"
             )
 
-        self.draw_graph(edge_flows, title="Graphe après exécution")
-
-    def draw_current_graph(self):
+    def display_current_graph(self):
         validated = self.validate_graph_inputs()
         if validated is None:
             return
 
-        n, _, _, _ = validated
-
-        G = nx.DiGraph()
-        G.add_nodes_from(range(n))
+        self.result_text.delete("1.0", tk.END)
+        self.result_text.insert(tk.END, "=== GRAPHE COURANT ===\n")
+        self.result_text.insert(tk.END, "Chaque arête est affichée sous la forme :\n")
+        self.result_text.insert(tk.END, "u -> v | capacité, coût\n\n")
 
         for u, v, capacity, cost in self.edges:
-            G.add_edge(u, v, capacity=capacity, cost=cost, flow=0)
-
-        self._plot_graph(G, "Graphe courant")
-
-    def draw_graph(self, edge_data, title="Graphe"):
-        validated = self.validate_graph_inputs()
-        if validated is None:
-            return
-
-        n, _, _, _ = validated
-
-        G = nx.DiGraph()
-        G.add_nodes_from(range(n))
-
-        for u, v, cap, cost, flow in edge_data:
-            G.add_edge(u, v, capacity=cap, cost=cost, flow=flow)
-
-        self._plot_graph(G, title)
-
-    def _plot_graph(self, G, title):
-        plt.figure(figsize=(10, 6))
-
-        try:
-            pos = nx.spring_layout(G, seed=42)
-        except Exception:
-            pos = nx.circular_layout(G)
-
-        edge_colors = []
-        widths = []
-
-        for _, _, data in G.edges(data=True):
-            flow = data.get("flow", 0)
-            if flow > 0:
-                edge_colors.append("red")
-                widths.append(2.5)
-            else:
-                edge_colors.append("gray")
-                widths.append(1.5)
-
-        nx.draw(
-            G,
-            pos,
-            with_labels=True,
-            node_size=2200,
-            node_color="lightblue",
-            font_size=11,
-            font_weight="bold",
-            arrows=True,
-            edge_color=edge_colors,
-            width=widths
-        )
-
-        edge_labels = {}
-        for u, v, data in G.edges(data=True):
-            cap = data.get("capacity", 0)
-            cost = data.get("cost", 0)
-            flow = data.get("flow", 0)
-            edge_labels[(u, v)] = f"cap={cap}\ncoût={cost}\nflot={flow}"
-
-        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=9)
-
-        plt.title(title)
-        plt.axis("off")
-        plt.show()
+            self.result_text.insert(
+                tk.END,
+                f"{u} -> {v} | capacité={capacity}, coût={cost}\n"
+            )
 
 
 if __name__ == "__main__":
